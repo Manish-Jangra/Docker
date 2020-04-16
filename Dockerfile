@@ -10,8 +10,8 @@ RUN powershell -Command \
  	choco feature enable -n allowGlobalConfirmation ; \
  	choco install git ; \
  	choco install python ; \
-  choco install jre8 ; \
-  choco install nodejs ; \
+  	choco install jre8 ; \
+  	choco install nodejs ; \
  	choco install googlechrome -y
 RUN NET USER regress "QA@123qa" /add ; \
     NET LOCALGROUP Administrators /add regress ; \
