@@ -1,21 +1,21 @@
-# Pulling Windows10 v1809
-FROM mcr.microsoft.com/windows:1809
-LABEL Description="PATHWAVE" Vendor="Microsoft" Version="1"
+FROM mcr.microsoft.com/windows:1909
+LABEL Description="Regression" Target="Windows10" Version=1
+VOLUME ["D:"]      # This creates D Drive
 
-# Changing PowerShell Execution Policy and Installing Chocolatey
-RUN powershell -Command Set-ExecutionPolicy Bypass -Force
-RUN powershell -Command Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-RUN powershell -Command choco --version
-
-# Installing Google Chrome
-RUN powershell -Command choco feature enable -n allowGlobalConfirmation
-RUN powershell -Command choco install googlechrome -y
-
-# Installing JAVA
-RUN powershell -Command choco install jre8
-
-# Installing Node JS
-RUN powershell -Command choco install nodejs
-
-# Installing Git
-RUN powershell -Command choco install git
+# Changing PowerShell Execution Policy and Installing Chocolatey and Installing Other Tools
+RUN powershell -Command \
+	Set-ExecutionPolicy Bypass -Force ; \
+ 	Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')) ; \
+ 	choco --version ; \
+ 	choco feature enable -n allowGlobalConfirmation ; \
+ 	choco install git ; \
+ 	choco install python ; \
+  choco install jre8 ; \
+  choco install nodejs ; \
+ 	choco install googlechrome -y
+RUN NET USER regress "QA@123qa" /add ; \
+    NET LOCALGROUP Administrators /add regress ; \
+    setx /M HOMEPATH "users\regress" ; \
+    mkdir -p C:\tmp
+SHELL ["powershell"]
+ADD .ssh /Users/username/.ssh      # This add .SSH Keys for the user
